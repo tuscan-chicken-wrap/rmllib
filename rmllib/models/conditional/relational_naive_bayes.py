@@ -101,6 +101,28 @@ class RelationalNaiveBayes(LocalModel):
         '''
         return np.argmax(self.predict_proba(data), axis=1)
 
+	
+    #Lists the top K features for each output label (0 or 1)
+    def listTopKfeatures(self, data, k):
+
+        for ycl in data.labels.Y.columns:
+            ind = np.argpartition(self.feature_log_prob_x_.loc[ycl,:].values, -k)[-k:]  #Get the indices of the k largest values for prob x
+            #print(self.feature_log_prob_x_.loc[ycl,:].values)
+            #print(ind)
+            #print(data.features.columns.levels[0])  #This is the names of the features
+            #print(data.features.columns.labels[0][ind])  #This gives the index of the feature list (since features are true or false, this is double the size of the feature list)
+            #print(data.features.columns.labels[1][ind])  #This gives whether the feature is present or not
+            print("\nPROB Y= " + str(ycl) + " GIVEN OWN FEATURES")
+            print(data.features.columns.levels[0][data.features.columns.labels[0][ind]])  #This gives us the highest valued K features for this output (0 or 1)
+            print(data.features.columns.labels[1][ind])  #This gives whether the feature is present or not
+			
+        for ycl in data.labels.Y.columns:
+            ind = np.argpartition(self.feature_log_prob_y_given_neighbor_x_.loc[ycl,:], -k)[-k:]  #Get the indices of the k largest values for prob y given x neighbors
+            print("\nPROB Y = " + str(ycl) + " GIVEN NEIGHBORING FEATURES")
+            print(data.features.columns.levels[0][data.features.columns.labels[0][ind]])  #This gives us the highest valued K features for this output (0 or 1)
+            print(data.features.columns.labels[1][ind])  #This gives whether the feature is present or not
+			
+
     def fit(self, data, rel_update_only=False):
         if not rel_update_only:
             self.class_log_prior_ = np.log(data.labels.Y[data.mask.Labeled].mean())
@@ -127,7 +149,8 @@ class RelationalNaiveBayes(LocalModel):
 				
                 self.feature_log_prob_x_.loc[ycl, :] = np.log(currentMeanCalc)
 				
-            #print(self.feature_log_prob_x_)
+            print(self.feature_log_prob_x_)
+            #listTopKfeatures(self.feature_log_prob_x_, 10)
 				
             #Here you can iterate through each labelled point, and use each feature from its neighbors (edges=1) to get a probability of 
             # Y given X_N.  You can average the probability of these points to get an overall probability of Y given its neighbors
@@ -166,7 +189,7 @@ class RelationalNaiveBayes(LocalModel):
                     self.feature_log_prob_y_given_neighbor_x_.loc[ycl, :] += currentMeanCalc
                     
                 self.feature_log_prob_y_given_neighbor_x_.loc[ycl,:] = np.log(self.feature_log_prob_y_given_neighbor_x_.loc[ycl,:].divide(total_nodes))
-                #print(self.feature_log_prob_y_given_neighbor_x_)
+             #print(self.feature_log_prob_y_given_neighbor_x_)
 			
 
 

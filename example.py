@@ -51,6 +51,7 @@ for dataset in DATASETS:
         train_data = TRAIN_DATA.copy()
         start_time = time.time()
         model.fit(train_data)
+        model.listTopKfeatures(train_data, 10)
         print("(" + dataset.name + ") " + model.name, 'Training Time:', time.time() - start_time)
         model.predictions = model.predict_proba(train_data)
         print("(" + dataset.name + ") " + model.name, 'Total Time:', time.time() - start_time)            
