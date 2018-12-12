@@ -32,12 +32,12 @@ DATASETS.append(AcademicPerformance(name='Academic Performance', subfeatures=Non
 MODELS = []
 
 #Conditional
-MODELS.append(RelationalNaiveBayes(name='NB', learn_method='iid', infer_method='iid', calibrate=False))
+#MODELS.append(RelationalNaiveBayes(name='NB', learn_method='iid', infer_method='iid', calibrate=False))
 MODELS.append(RelationalNaiveBayes(name='RNB', learn_method='r_iid', infer_method='r_iid', calibrate=False))
 #Collective inference
-MODELS.append(VariationalInference(RelationalNaiveBayes)(name='RNB_VI', learn_method='r_iid', calibrate=True))
+#MODELS.append(VariationalInference(RelationalNaiveBayes)(name='RNB_VI', learn_method='r_iid', calibrate=True))
 #Semi Supervised
-MODELS.append(ExpectationMaximization(VariationalInference(RelationalNaiveBayes))(name='RNB_EM_VI', learn_iter=3, calibrate=True))
+#MODELS.append(ExpectationMaximization(VariationalInference(RelationalNaiveBayes))(name='RNB_EM_VI', learn_iter=3, calibrate=True))
 
 #Mine
 #MODELS.append(RelationalNaiveBayes(name='RNB', learn_method='r_iid2', infer_method='r_iid', calibrate=False))
@@ -51,7 +51,7 @@ for dataset in DATASETS:
         train_data = TRAIN_DATA.copy()
         start_time = time.time()
         model.fit(train_data)
-        model.listTopKfeatures(train_data, 10)
+        model.listTopKfeatures(train_data, 5)
         print("(" + dataset.name + ") " + model.name, 'Training Time:', time.time() - start_time)
         model.predictions = model.predict_proba(train_data)
         print("(" + dataset.name + ") " + model.name, 'Total Time:', time.time() - start_time)            
